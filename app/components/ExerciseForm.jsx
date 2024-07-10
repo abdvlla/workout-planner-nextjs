@@ -117,6 +117,7 @@ const ExerciseForm = () => {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the exercise"
           className="textarea textarea-bordered textarea-sm w-full max-w-xs"
+          maxLength={125}
         ></textarea>
         {errors.description && (
           <p className="text-red-500">{errors.description}</p>

@@ -21,14 +21,14 @@ const DeleteAlertDialog = ({ id, onDelete }) => {
           </AlertDialog.Description>
           <div className="flex justify-end gap-[25px]">
             <AlertDialog.Cancel asChild>
-              <button className="text-base-300 font-semibold bg-gray-200 hover:bg-gray-400 focus:shadow-gray-700 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] leading-none outline-none focus:shadow-[0_0_0_2px]">
+              <button className="text-white font-semibold bg-gray-500 hover:bg-gray-700 focus:shadow-gray-700 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] leading-none outline-none focus:shadow-[0_0_0_2px]">
                 Cancel
               </button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
               <button
                 onClick={() => onDelete(id)}
-                className="text-red-500 bg-red-100 hover:bg-red-200 focus:shadow-red-700 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-semibold leading-none outline-none focus:shadow-[0_0_0_2px]"
+                className="text-white bg-red-500 hover:bg-red-700 focus:shadow-red-700 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-semibold leading-none outline-none focus:shadow-[0_0_0_2px]"
               >
                 Yes, delete item
               </button>

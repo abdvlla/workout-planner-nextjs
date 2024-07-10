@@ -5,13 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "../utils/supabase/supabaseClient";
 import SkeletonCard from "./SkeletonCard";
-import EditIcon from "./icons/EditIcon";
 import OptionsIcon from "./icons/OptionsIcon";
 import AddIcon from "./icons/AddIcon";
 import dumbbellphoto from "./photos/dumbbellphoto.jpg";
 import DeleteAlertDialog from "./DeleteAlertDialog";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
+import EditExerciseDialog from "./EditExerciseDialog";
 
 const FetchExercises = () => {
   const [exercises, setExercises] = useState([]);
@@ -47,7 +47,7 @@ const FetchExercises = () => {
       ErrorToast("Failed to delete exercise.");
     } else {
       SuccessToast("Exercise deleted successfully!");
-      fetchData(); // Refresh the exercises list
+      fetchData();
     }
   };
 
@@ -102,7 +102,7 @@ const FetchExercises = () => {
                     role="button"
                     className="dropdown absolute top-2 left-2"
                   >
-                    <summary className="btn btn-sm m-1">
+                    <summary className="btn btn-sm  m-1">
                       <OptionsIcon />
                     </summary>
                     <ul
@@ -116,10 +116,10 @@ const FetchExercises = () => {
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/exercises/edit/${exercise.id}`}>
-                          <EditIcon />
-                          Edit
-                        </Link>
+                        <EditExerciseDialog
+                          id={exercise.id}
+                          fetchData={fetchData}
+                        />
                       </li>
                       <li>
                         <DeleteAlertDialog
