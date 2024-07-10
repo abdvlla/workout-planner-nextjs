@@ -13,6 +13,7 @@ import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
 import Search from "./Search";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
   ssr: false,
@@ -101,7 +102,9 @@ const FetchExercises = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
-      <Search placeholder={"Search exercises..."} />
+      <Suspense>
+        <Search placeholder={"Search exercises..."} />
+      </Suspense>
       <div
         role="tabpanel"
         className="tab-content p-4 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
