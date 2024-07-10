@@ -11,9 +11,8 @@ import AddIcon from "./icons/AddIcon";
 import dumbbellphoto from "./photos/dumbbellphoto.jpg";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
-import Search from "./Search";
+import Searchbar from "./Search";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
 const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
   ssr: false,
@@ -102,9 +101,7 @@ const FetchExercises = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
-      <Suspense>
-        <Search placeholder={"Search exercises..."} />
-      </Suspense>
+      <Searchbar placeholder="Search exercises..." />
       <div
         role="tabpanel"
         className="tab-content p-4 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"

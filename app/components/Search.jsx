@@ -2,8 +2,9 @@
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { Suspense } from "react";
 
-export default function Search({ placeholder }) {
+function Search({ placeholder }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -16,7 +17,7 @@ export default function Search({ placeholder }) {
       params.delete("query");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, 300);
+  }, 400);
 
   return (
     <div>
@@ -29,5 +30,13 @@ export default function Search({ placeholder }) {
         defaultValue={searchParams.get("query")?.toString() || ""}
       />
     </div>
+  );
+}
+
+export default function Searchbar({ placeholder }) {
+  return (
+    <Suspense>
+      <Search placeholder={placeholder} />
+    </Suspense>
   );
 }
