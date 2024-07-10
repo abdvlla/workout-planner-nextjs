@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
+import Image from "next/image";
 
 const UserProfile = () => {
   const [user, setUser] = useState("");
@@ -12,9 +13,12 @@ const UserProfile = () => {
         {user ? (
           <div>
             <div className="w-10 rounded-full btn btn-ghost btn-circle avatar">
-              <img
+              <Image
                 alt="Tailwind CSS Navbar component"
                 src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                width={100}
+                height={10}
+                priority={true}
               />
             </div>
             <ul
