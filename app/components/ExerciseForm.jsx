@@ -123,7 +123,15 @@ const ExerciseForm = () => {
           <p className="text-red-500">{errors.description}</p>
         )}
 
-        <button type="submit" className="btn btn-success mt-2 mx-auto">
+        <div className="label">
+          <span className="label-text">Cover image</span>
+        </div>
+        <input
+          type="file"
+          className="file-input file-input-bordered w-full max-w-xs"
+        />
+
+        <button type="submit" className="btn btn-success mt-4 mx-auto">
           Add exercise
         </button>
       </form>

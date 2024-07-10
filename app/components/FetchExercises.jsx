@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -11,6 +11,8 @@ import AddIcon from "./icons/AddIcon";
 import dumbbellphoto from "./photos/dumbbellphoto.jpg";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
+import Search from "./Search";
+import { useSearchParams } from "next/navigation";
 
 const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
   ssr: false,
@@ -42,15 +44,20 @@ const FetchExercises = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "";
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      let query = supabase.from("exercises").select();
+      let queryBuilder = supabase.from("exercises").select();
       if (selectedCategory !== "All") {
-        query = query.eq("category", selectedCategory);
+        queryBuilder = queryBuilder.eq("category", selectedCategory);
       }
-      const { data, error } = await query;
+      if (query) {
+        queryBuilder = queryBuilder.ilike("name", `%${query}%`);
+      }
+      const { data, error } = await queryBuilder;
       if (error) throw error;
       setExercises(data);
     } catch (error) {
@@ -58,7 +65,7 @@ const FetchExercises = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, query]);
 
   useEffect(() => {
     fetchData();
@@ -82,19 +89,22 @@ const FetchExercises = () => {
 
   return (
     <>
-      <Link
-        href="/exercises/add"
-        className="btn btn-primary px-2 flex mx-auto max-w-52"
-      >
-        Create exercise
-      </Link>
+      <div>
+        <Link
+          href="/exercises/add"
+          className="btn btn-primary px-2 flex mx-auto max-w-52"
+        >
+          Create exercise
+        </Link>
+      </div>
       <CategoryTabs
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
+      <Search placeholder={"Search exercises..."} />
       <div
         role="tabpanel"
-        className="tab-content p-4 lg:p-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        className="tab-content p-4 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
         {loading
           ? Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
@@ -113,7 +123,7 @@ const FetchExercises = () => {
                     role="button"
                     className="dropdown absolute top-2 left-2"
                   >
-                    <summary className="btn btn-sm  m-1">
+                    <summary className="btn btn-sm m-1">
                       <OptionsIcon />
                     </summary>
                     <ul
