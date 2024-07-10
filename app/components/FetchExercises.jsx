@@ -1,37 +1,55 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase/supabaseClient";
 import SkeletonCard from "./SkeletonCard";
+import EditIcon from "./icons/EditIcon";
+import OptionsIcon from "./icons/OptionsIcon";
+import AddIcon from "./icons/AddIcon";
+import dumbbellphoto from "./photos/dumbbellphoto.jpg";
+import DeleteAlertDialog from "./DeleteAlertDialog";
+import { SuccessToast } from "../utils/SuccessToast";
+import { ErrorToast } from "../utils/ErrorToast";
 
-const Exercises = () => {
+const FetchExercises = () => {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        let query = supabase.from("exercises").select();
-        if (selectedCategory !== "All") {
-          query = query.eq("category", selectedCategory);
-        }
-        const { data, error } = await query;
-        if (error) throw error;
-        setExercises(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      let query = supabase.from("exercises").select();
+      if (selectedCategory !== "All") {
+        query = query.eq("category", selectedCategory);
       }
-    };
+      const { data, error } = await query;
+      if (error) throw error;
+      setExercises(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [selectedCategory]);
+
+  const handleDelete = async (id) => {
+    const { error } = await supabase.from("exercises").delete().eq("id", id);
+    if (error) {
+      console.error("Error deleting exercise:", error);
+      ErrorToast("Failed to delete exercise.");
+    } else {
+      SuccessToast("Exercise deleted successfully!");
+      fetchData(); // Refresh the exercises list
+    }
+  };
 
   if (error) return <p>Error: {error}</p>;
 
@@ -73,7 +91,7 @@ const Exercises = () => {
               <div key={exercise.id} className="card bg-base-200 shadow-xl">
                 <div className="relative">
                   <Image
-                    src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                    src={dumbbellphoto}
                     alt="Photo of exercise"
                     height={500}
                     width={600}
@@ -85,20 +103,7 @@ const Exercises = () => {
                     className="dropdown absolute top-2 left-2"
                   >
                     <summary className="btn btn-sm m-1">
-                      {" "}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        className="inline-block h-5 w-5 stroke-current"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                        ></path>
-                      </svg>
+                      <OptionsIcon />
                     </summary>
                     <ul
                       tabIndex={0}
@@ -106,42 +111,21 @@ const Exercises = () => {
                     >
                       <li>
                         <Link href={""}>
-                          {" "}
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                            />
-                          </svg>
+                          <AddIcon />
                           Add
                         </Link>
                       </li>
                       <li>
                         <Link href={`/exercises/edit/${exercise.id}`}>
-                          {" "}
-                          <svg
-                            className="feather feather-edit-3 h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                          </svg>
+                          <EditIcon />
                           Edit
                         </Link>
+                      </li>
+                      <li>
+                        <DeleteAlertDialog
+                          id={exercise.id}
+                          onDelete={handleDelete}
+                        />
                       </li>
                     </ul>
                   </div>
@@ -168,4 +152,4 @@ const Exercises = () => {
   );
 };
 
-export default Exercises;
+export default FetchExercises;
