@@ -1,17 +1,41 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { supabase } from "../utils/supabase/supabaseClient";
 import SkeletonCard from "./SkeletonCard";
 import OptionsIcon from "./icons/OptionsIcon";
 import AddIcon from "./icons/AddIcon";
 import dumbbellphoto from "./photos/dumbbellphoto.jpg";
-import DeleteAlertDialog from "./DeleteAlertDialog";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
-import EditExerciseDialog from "./EditExerciseDialog";
+
+const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
+  ssr: false,
+});
+const DeleteAlertDialog = dynamic(() => import("./DeleteAlertDialog"), {
+  ssr: false,
+});
+
+const CategoryTabs = ({ selectedCategory, setSelectedCategory }) => (
+  <div
+    role="tablist"
+    className="tabs join join-vertical lg:join-horizontal md:join-horizontal sm:join-vertical tabs-boxed flex justify-center mt-4"
+  >
+    {["All", "Chest", "Back", "Legs", "Shoulders", "Arms"].map((category) => (
+      <a
+        key={category}
+        role="tab"
+        className={`tab ${selectedCategory === category ? "tab-active" : ""}`}
+        onClick={() => setSelectedCategory(category)}
+      >
+        {category}
+      </a>
+    ))}
+  </div>
+);
 
 const FetchExercises = () => {
   const [exercises, setExercises] = useState([]);
@@ -19,9 +43,9 @@ const FetchExercises = () => {
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       let query = supabase.from("exercises").select();
       if (selectedCategory !== "All") {
         query = query.eq("category", selectedCategory);
@@ -34,22 +58,25 @@ const FetchExercises = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchData();
-  }, [selectedCategory]);
+  }, [fetchData]);
 
-  const handleDelete = async (id) => {
-    const { error } = await supabase.from("exercises").delete().eq("id", id);
-    if (error) {
-      console.error("Error deleting exercise:", error);
-      ErrorToast("Failed to delete exercise.");
-    } else {
-      SuccessToast("Exercise deleted successfully!");
-      fetchData();
-    }
-  };
+  const handleDelete = useCallback(
+    async (id) => {
+      const { error } = await supabase.from("exercises").delete().eq("id", id);
+      if (error) {
+        console.error("Error deleting exercise:", error);
+        ErrorToast("Failed to delete exercise.");
+      } else {
+        SuccessToast("Exercise deleted successfully!");
+        fetchData();
+      }
+    },
+    [fetchData]
+  );
 
   if (error) return <p>Error: {error}</p>;
 
@@ -61,26 +88,10 @@ const FetchExercises = () => {
       >
         Create exercise
       </Link>
-      <div
-        role="tablist"
-        className="tabs join join-vertical lg:join-horizontal md:join-horizontal sm:join-vertical tabs-boxed flex justify-center mt-4"
-      >
-        {["All", "Chest", "Back", "Legs", "Shoulders", "Arms"].map(
-          (category) => (
-            <a
-              key={category}
-              role="tab"
-              className={`tab ${
-                selectedCategory === category ? "tab-active" : ""
-              }`}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </a>
-          )
-        )}
-      </div>
-
+      <CategoryTabs
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
       <div
         role="tabpanel"
         className="tab-content p-4 lg:p-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -95,7 +106,7 @@ const FetchExercises = () => {
                     alt="Photo of exercise"
                     height={500}
                     width={600}
-                    priority={true}
+                    priority
                   />
                   <div
                     tabIndex={0}
@@ -117,7 +128,7 @@ const FetchExercises = () => {
                       </li>
                       <li>
                         <EditExerciseDialog
-                          id={exercise.id}
+                          exercise={exercise}
                           fetchData={fetchData}
                         />
                       </li>

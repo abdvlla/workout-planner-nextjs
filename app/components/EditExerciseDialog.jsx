@@ -2,56 +2,42 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../utils/supabase/supabaseClient";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
 import EditIcon from "./icons/EditIcon";
 
-const EditExerciseDialog = ({ id, fetchData }) => {
-  const [formData, setFormData] = useState(null);
+const EditExerciseDialog = ({ exercise, fetchData }) => {
+  const [formData, setFormData] = useState(exercise);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchExerciseData = async () => {
-      const { data, error } = await supabase
-        .from("exercises")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (error) {
-        console.error("Error fetching exercise:", error);
-      } else {
-        setFormData(data);
-      }
-    };
-
-    fetchExerciseData();
-  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
 
-  const subcategoryMapping = {
-    Chest: ["Upper Chest", "Middle Chest", "Lower Chest"],
-    Back: ["Upper Back", "Lats"],
-    Legs: ["Quadriceps", "Hamstrings", "Calves", "Glutes"],
-    Shoulders: ["Front Deltoid", "Side Deltoid", "Rear Deltoid"],
-    Arms: ["Biceps", "Triceps"],
-  };
+  const subcategoryMapping = useMemo(
+    () => ({
+      Chest: ["Upper Chest", "Middle Chest", "Lower Chest"],
+      Back: ["Upper Back", "Lats"],
+      Legs: ["Quadriceps", "Hamstrings", "Calves", "Glutes"],
+      Shoulders: ["Front Deltoid", "Side Deltoid", "Rear Deltoid"],
+      Arms: ["Biceps", "Triceps"],
+    }),
+    []
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error } = await supabase
       .from("exercises")
       .update(formData)
-      .eq("id", id);
+      .eq("id", exercise.id);
 
     if (error) {
       console.error("Error updating exercise:", error);
@@ -63,8 +49,6 @@ const EditExerciseDialog = ({ id, fetchData }) => {
     }
   };
 
-  if (!formData) return <div>Loading...</div>;
-
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -75,7 +59,7 @@ const EditExerciseDialog = ({ id, fetchData }) => {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-gray-950 bg-opacity-50 fixed inset-0" />
-        <Dialog.Content className=" fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-gray-50 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
+        <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-gray-50 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
           <Dialog.Title className="text-base-100 font-semibold m-0 text-[17px]">
             Edit exercise
           </Dialog.Title>
@@ -87,7 +71,7 @@ const EditExerciseDialog = ({ id, fetchData }) => {
             className="form-control max-w-xs flex justify-center mx-auto"
             onSubmit={handleSubmit}
           >
-            <fieldset className="mb-[10px] ">
+            <fieldset className="mb-[10px]">
               <span className="label-text text-base-100 text-[15px] font-semibold">
                 Name of exercise
               </span>
@@ -120,7 +104,7 @@ const EditExerciseDialog = ({ id, fetchData }) => {
               </select>
             </fieldset>
             {formData.category && (
-              <fieldset className="mb-[10px]  gap-5">
+              <fieldset className="mb-[10px] gap-5">
                 <label className="text-base-100 font-semibold w-[90px] text-right text-[15px]">
                   Part of muscle group
                 </label>
