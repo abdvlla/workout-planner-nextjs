@@ -35,7 +35,7 @@ function Search({ placeholder }) {
 
 export default function Searchbar({ placeholder }) {
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <Search placeholder={placeholder} />
     </Suspense>
   );

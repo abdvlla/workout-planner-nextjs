@@ -13,6 +13,7 @@ import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
 import Searchbar from "./Search";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
   ssr: false,
