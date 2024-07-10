@@ -105,7 +105,7 @@ const Exercises = () => {
                       className="menu dropdown-content bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
                     >
                       <li>
-                        <a>
+                        <Link href={""}>
                           {" "}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -122,10 +122,10 @@ const Exercises = () => {
                             />
                           </svg>
                           Add
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a>
+                        <Link href={`/exercises/edit/${exercise.id}`}>
                           {" "}
                           <svg
                             className="feather feather-edit-3 h-5 w-5"
@@ -141,7 +141,7 @@ const Exercises = () => {
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                           </svg>
                           Edit
-                        </a>
+                        </Link>
                       </li>
                     </ul>
                   </div>
