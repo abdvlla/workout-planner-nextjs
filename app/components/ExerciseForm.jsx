@@ -131,7 +131,10 @@ const ExerciseForm = () => {
           className="file-input file-input-bordered w-full max-w-xs"
         />
 
-        <button type="submit" className="btn btn-success mt-4 mx-auto">
+        <button
+          type="submit"
+          className="btn btn-success bg-green-500 mt-4 mx-auto"
+        >
           Add exercise
         </button>
       </form>

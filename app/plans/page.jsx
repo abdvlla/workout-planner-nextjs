@@ -1,7 +1,13 @@
 import React from "react";
+import FetchPlans from "../components/plansComponents/FetchPlans";
+import { Suspense } from "react";
 
 const Plans = () => {
-  return <div>Plans</div>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FetchPlans />
+    </Suspense>
+  );
 };
 
 export default Plans;
