@@ -124,7 +124,7 @@ const FetchExercises = () => {
                     role="button"
                     className="dropdown absolute top-2 left-2"
                   >
-                    <summary className="btn btn-sm m-1">
+                    <summary className="btn btn-sm m-1 ">
                       <OptionsIcon />
                     </summary>
                     <ul

@@ -76,10 +76,10 @@ const AddExerciseForm = () => {
         <Dialog.Portal>
           <Dialog.Overlay className="bg-gray-950 bg-opacity-50 fixed inset-0" />
           <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-gray-50 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
-            <Dialog.Title className="text-base-100 font-semibold m-0 text-[17px]">
+            <Dialog.Title className=" font-semibold m-0 text-[17px]">
               Create plan
             </Dialog.Title>
-            <Dialog.Description className="text-base-100 font-normal mt-[10px] mb-5 text-[15px] leading-normal">
+            <Dialog.Description className=" font-normal mt-[10px] mb-5 text-[15px] leading-normal">
               Make a plan and add exercises here. Click save when you are done.
             </Dialog.Description>
             <form
@@ -87,7 +87,7 @@ const AddExerciseForm = () => {
               className="form-control max-w-xs flex justify-center mx-auto"
             >
               <fieldset className="mb-[10px]">
-                <span className="label-text text-base-100 text-[15px] font-semibold">
+                <span className="label-text  text-[15px] font-semibold">
                   Name of plan
                 </span>
                 <input
@@ -95,11 +95,11 @@ const AddExerciseForm = () => {
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="input input-bordered max-w-xs text-gray-200 w-full"
+                  className="input input-bordered max-w-xs  w-full"
                 />
               </fieldset>
               <fieldset className="mb-[10px]">
-                <span className="label-text text-base-100 text-[15px] font-semibold">
+                <span className="label-text  text-[15px] font-semibold">
                   Description
                 </span>
                 <textarea
@@ -107,11 +107,11 @@ const AddExerciseForm = () => {
                   name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="input input-bordered max-w-xs text-gray-200 w-full"
+                  className="input input-bordered max-w-xs  w-full"
                 />
               </fieldset>
               <fieldset className="mb-[10px]">
-                <span className="label-text text-base-100 text-[15px] font-semibold">
+                <span className="label-text  text-[15px] font-semibold">
                   Exercises
                 </span>
                 <Select
@@ -119,7 +119,7 @@ const AddExerciseForm = () => {
                   options={availableExercises}
                   value={exercises}
                   onChange={(selectedOptions) => setExercises(selectedOptions)}
-                  styles={customStyles}
+                  // styles={customStyles}
                   className="w-full basic-multi-select"
                   classNamePrefix="select"
                 />
@@ -130,7 +130,7 @@ const AddExerciseForm = () => {
             </form>
             <Dialog.Close asChild>
               <button
-                className="text-base-100 hover:bg-gray-200 focus:shadow-gray-700 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                className=" hover:bg-gray-200 focus:shadow-gray-700 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
                 aria-label="Close"
               >
                 <Cross2Icon />

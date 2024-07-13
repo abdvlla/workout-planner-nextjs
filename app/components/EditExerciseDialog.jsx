@@ -60,10 +60,10 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
       <Dialog.Portal>
         <Dialog.Overlay className="bg-gray-950 bg-opacity-50 fixed inset-0" />
         <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-gray-50 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
-          <Dialog.Title className="text-base-100 font-semibold m-0 text-[17px]">
+          <Dialog.Title className=" font-semibold m-0 text-[17px]">
             Edit exercise
           </Dialog.Title>
-          <Dialog.Description className="text-base-100 font-normal mt-[10px] mb-5 text-[15px] leading-normal">
+          <Dialog.Description className=" font-normal mt-[10px] mb-5 text-[15px] leading-normal">
             Make changes to the selected exercise here. Click save when you are
             done.
           </Dialog.Description>
@@ -72,7 +72,7 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
             onSubmit={handleSubmit}
           >
             <fieldset className="mb-[10px]">
-              <span className="label-text text-base-100 text-[15px] font-semibold">
+              <span className="label-text  text-[15px] font-semibold">
                 Name of exercise
               </span>
               <input
@@ -80,18 +80,18 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
                 name="name"
                 value={formData.name || ""}
                 onChange={handleChange}
-                className="input input-bordered max-w-xs text-gray-200 w-full"
+                className="input input-bordered max-w-xs  w-full"
               />
             </fieldset>
             <fieldset className="mb-[10px]">
-              <span className="label-text text-base-100 text-[15px] font-semibold">
+              <span className="label-text  text-[15px] font-semibold">
                 Muscle group
               </span>
               <select
                 name="category"
                 value={formData.category || ""}
                 onChange={handleChange}
-                className="select select-bordered text-gray-200 max-w-xs w-full"
+                className="select select-bordered  max-w-xs w-full"
               >
                 <option disabled value="">
                   Muscle group
@@ -105,14 +105,14 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
             </fieldset>
             {formData.category && (
               <fieldset className="mb-[10px] gap-5">
-                <label className="text-base-100 font-semibold w-[90px] text-right text-[15px]">
+                <label className=" font-semibold w-[90px] text-right text-[15px]">
                   Part of muscle group
                 </label>
                 <select
                   name="subcategory"
                   value={formData.subcategory || ""}
                   onChange={handleChange}
-                  className="select select-bordered text-gray-200 max-w-xs w-full"
+                  className="select select-bordered  max-w-xs w-full"
                 >
                   <option disabled value="">
                     Muscle
@@ -127,7 +127,7 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
             )}
             <fieldset className="mb-[10px] gap-5">
               <label
-                className="text-base-100 font-semibold w-[90px] text-right text-[15px]"
+                className=" font-semibold w-[90px] text-right text-[15px]"
                 htmlFor="description"
               >
                 Description
@@ -138,13 +138,13 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
                 value={formData.description || ""}
                 onChange={handleChange}
                 placeholder="Describe the exercise"
-                className="textarea textarea-bordered text-gray-200 textarea-sm w-full max-w-xs"
+                className="textarea textarea-bordered  textarea-sm w-full max-w-xs"
               ></textarea>
             </fieldset>
             <div className="mt-1 flex justify-end">
               <button
                 type="submit"
-                className="btn btn-success text-white mx-auto "
+                className="btn btn-success bg-green-500 text-white mx-auto "
               >
                 Save changes
               </button>
@@ -152,7 +152,7 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
           </form>
           <Dialog.Close asChild>
             <button
-              className="text-base-100 hover:bg-gray-200 focus:shadow-gray-700 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+              className=" hover:bg-gray-200 focus:shadow-gray-700 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
               aria-label="Close"
             >
               <Cross2Icon />
