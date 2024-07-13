@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { supabase } from "@/app/utils/supabase/supabaseClient";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { supabase } from "@/app/utils/supabase/supabaseClient";
 import Select from "react-select";
 import { SuccessToast } from "@/app/utils/SuccessToast";
 import { ErrorToast } from "@/app/utils/ErrorToast";
 import { customStyles } from "./customSelectStyles";
 
-const AddExerciseForm = () => {
+const AddPlanForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [exercises, setExercises] = useState([]);
@@ -95,7 +95,7 @@ const AddExerciseForm = () => {
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="input input-bordered max-w-xs  w-full"
+                  className="input input-bordered   w-full"
                 />
               </fieldset>
               <fieldset className="mb-[10px]">
@@ -107,7 +107,7 @@ const AddExerciseForm = () => {
                   name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="input input-bordered max-w-xs  w-full"
+                  className="input input-bordered   w-full"
                 />
               </fieldset>
               <fieldset className="mb-[10px]">
@@ -143,4 +143,4 @@ const AddExerciseForm = () => {
   );
 };
 
-export default AddExerciseForm;
+export default AddPlanForm;

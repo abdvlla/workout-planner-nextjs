@@ -13,7 +13,7 @@ import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
 import Searchbar from "./Search";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import ExerciseForm from "./ExerciseForm";
 
 const EditExerciseDialog = dynamic(() => import("./EditExerciseDialog"), {
   ssr: false,
@@ -86,17 +86,16 @@ const FetchExercises = () => {
     [fetchData]
   );
 
+  const handleExerciseAdded = () => {
+    fetchData();
+  };
+
   if (error) return <p>Error: {error}</p>;
 
   return (
     <>
       <div>
-        <Link
-          href="/exercises/add"
-          className="btn btn-primary px-2 flex mx-auto max-w-52"
-        >
-          Create exercise
-        </Link>
+        <ExerciseForm onExerciseAdded={handleExerciseAdded} />
       </div>
       <CategoryTabs
         selectedCategory={selectedCategory}
@@ -154,16 +153,21 @@ const FetchExercises = () => {
                 </div>
 
                 <div className="card-body">
-                  <h2 className="card-title">{exercise.name}</h2>
+                  <h2 className="card-title">
+                    {exercise.name}{" "}
+                    <div className="badge badge-outline">
+                      {exercise.category}
+                    </div>
+                  </h2>
+
                   <p>{exercise.description}</p>
                   <div>
                     <div className="card-actions justify-end">
-                      <div className="badge badge-outline">
-                        {exercise.category}
-                      </div>
-                      <div className="badge badge-outline">
-                        {exercise.subcategory}
-                      </div>
+                      {(exercise.subcategories || []).map((sub, index) => (
+                        <div key={index} className="badge badge-outline">
+                          {sub}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

@@ -1,10 +1,12 @@
 "use client";
-import AddExerciseForm from "./AddExerciseForm";
+import AddPlanForm from "./AddPlanForm";
+import Searchbar from "../Search";
 
 const FetchPlans = () => {
   return (
     <>
-      <AddExerciseForm />
+      <AddPlanForm />
+      <Searchbar placeholder={"Search plans..."} />
     </>
   );
 };

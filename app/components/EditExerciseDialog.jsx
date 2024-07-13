@@ -8,9 +8,16 @@ import { supabase } from "../utils/supabase/supabaseClient";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
 import EditIcon from "./icons/EditIcon";
+import Select from "react-select";
 
 const EditExerciseDialog = ({ exercise, fetchData }) => {
-  const [formData, setFormData] = useState(exercise);
+  const [formData, setFormData] = useState({
+    ...exercise,
+    subcategories: (exercise.subcategories || []).map((sub) => ({
+      value: sub,
+      label: sub,
+    })),
+  });
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -21,22 +28,44 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
     }));
   };
 
+  const handleSelectChange = (selectedOptions, actionMeta) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [actionMeta.name]: selectedOptions,
+    }));
+  };
+
   const subcategoryMapping = useMemo(
     () => ({
       Chest: ["Upper Chest", "Middle Chest", "Lower Chest"],
-      Back: ["Upper Back", "Lats"],
+      Back: [
+        "Upper Lats",
+        "Middle Lats",
+        "Lower Lats",
+        "Rear Deltoid",
+        "Traps",
+        "Rhomboid",
+        "Teres Major",
+      ],
       Legs: ["Quadriceps", "Hamstrings", "Calves", "Glutes"],
       Shoulders: ["Front Deltoid", "Side Deltoid", "Rear Deltoid"],
-      Arms: ["Biceps", "Triceps"],
+      Arms: ["Biceps", "Triceps", "Forearms"],
     }),
     []
   );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { name, category, subcategories, description } = formData;
+
     const { error } = await supabase
       .from("exercises")
-      .update(formData)
+      .update({
+        name,
+        category,
+        subcategories: subcategories.map((sub) => sub.value),
+        description,
+      })
       .eq("id", exercise.id);
 
     if (error) {
@@ -48,6 +77,17 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
       router.push("/exercises");
     }
   };
+
+  const categoryOptions = Object.keys(subcategoryMapping).map((cat) => ({
+    value: cat,
+    label: cat,
+  }));
+  const subcategoryOptions = formData.category
+    ? subcategoryMapping[formData.category].map((sub) => ({
+        value: sub,
+        label: sub,
+      }))
+    : [];
 
   return (
     <Dialog.Root>
@@ -87,42 +127,36 @@ const EditExerciseDialog = ({ exercise, fetchData }) => {
               <span className="label-text  text-[15px] font-semibold">
                 Muscle group
               </span>
-              <select
+              <Select
                 name="category"
-                value={formData.category || ""}
-                onChange={handleChange}
-                className="select select-bordered  max-w-xs w-full"
-              >
-                <option disabled value="">
-                  Muscle group
-                </option>
-                <option>Chest</option>
-                <option>Back</option>
-                <option>Legs</option>
-                <option>Shoulders</option>
-                <option>Arms</option>
-              </select>
+                value={categoryOptions.find(
+                  (option) => option.value === formData.category
+                )}
+                onChange={(selectedOption) =>
+                  handleChange({
+                    target: { name: "category", value: selectedOption.value },
+                  })
+                }
+                options={categoryOptions}
+                placeholder="Select category"
+                className=" w-full"
+                classNamePrefix="select"
+              />
             </fieldset>
             {formData.category && (
               <fieldset className="mb-[10px] gap-5">
-                <label className=" font-semibold w-[90px] text-right text-[15px]">
+                <span className=" font-semibold w-[90px] text-right text-[15px]">
                   Part of muscle group
-                </label>
-                <select
-                  name="subcategory"
-                  value={formData.subcategory || ""}
-                  onChange={handleChange}
-                  className="select select-bordered  max-w-xs w-full"
-                >
-                  <option disabled value="">
-                    Muscle
-                  </option>
-                  {subcategoryMapping[formData.category].map((sub) => (
-                    <option key={sub} value={sub}>
-                      {sub}
-                    </option>
-                  ))}
-                </select>
+                </span>
+                <Select
+                  isMulti
+                  name="subcategories"
+                  value={formData.subcategories}
+                  onChange={handleSelectChange}
+                  options={subcategoryOptions}
+                  className="basic-multi-select w-full"
+                  classNamePrefix="select"
+                />
               </fieldset>
             )}
             <fieldset className="mb-[10px] gap-5">

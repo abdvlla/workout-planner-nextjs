@@ -4,20 +4,31 @@ import React, { useState } from "react";
 import { supabase } from "@/app/utils/supabase/supabaseClient";
 import { SuccessToast } from "../utils/SuccessToast";
 import { ErrorToast } from "../utils/ErrorToast";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import Select from "react-select";
 
-const ExerciseForm = () => {
+const ExerciseForm = ({ onExerciseAdded }) => {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
-  const [subcategory, setSubcategory] = useState("");
+  const [category, setCategory] = useState(null);
+  const [subcategories, setSubcategories] = useState([]);
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
   const subcategoryMapping = {
     Chest: ["Upper Chest", "Middle Chest", "Lower Chest"],
-    Back: ["Upper Back", "Lats"],
+    Back: [
+      "Upper Lats",
+      "Middle Lats",
+      "Lower Lats",
+      "Rear Deltoid",
+      "Traps",
+      "Rhomboid",
+      "Teres Major",
+    ],
     Legs: ["Quadriceps", "Hamstrings", "Calves", "Glutes"],
     Shoulders: ["Front Deltoid", "Side Deltoid", "Rear Deltoid"],
-    Arms: ["Biceps", "Triceps"],
+    Arms: ["Biceps", "Triceps", "Forearms"],
   };
 
   const validateForm = () => {
@@ -33,111 +44,155 @@ const ExerciseForm = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const { data, error } = await supabase
-      .from("exercises")
-      .insert([{ name, category, subcategory, description }]);
+    const { data, error } = await supabase.from("exercises").insert([
+      {
+        name,
+        category: category.value,
+        subcategories: subcategories.map((sub) => sub.value), // Updated here
+        description,
+      },
+    ]);
     if (error) {
       console.error("Error inserting exercise:", error);
       ErrorToast("Failed to add exercise.");
     } else {
       console.log("Exercise added:", data);
       setName("");
-      setCategory("");
-      setSubcategory("");
+      setCategory(null);
+      setSubcategories([]);
       setDescription("");
       setErrors({});
       SuccessToast("Exercise added successfully!");
+      onExerciseAdded();
     }
   };
 
+  const categoryOptions = Object.keys(subcategoryMapping).map((cat) => ({
+    value: cat,
+    label: cat,
+  }));
+  const subcategoryOptions = category
+    ? subcategoryMapping[category.value].map((sub) => ({
+        value: sub,
+        label: sub,
+      }))
+    : [];
+
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="form-control max-w-xs flex justify-center mx-auto h-screen"
-      >
-        <div className="label">
-          <span className="label-text">Name of exercise</span>
-        </div>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Type here"
-          className="input input-bordered max-w-xs"
-        />
-        {errors.name && <p className="text-red-500">{errors.name}</p>}
-
-        <div className="label">
-          <span className="label-text">Muscle group</span>
-        </div>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="select select-bordered w-full max-w-xs"
-        >
-          <option disabled value="">
-            Category
-          </option>
-          <option>Chest</option>
-          <option>Back</option>
-          <option>Legs</option>
-          <option>Shoulders</option>
-          <option>Arms</option>
-        </select>
-        {errors.category && <p className="text-red-500">{errors.category}</p>}
-
-        {category && (
-          <>
-            <div className="label">
-              <span className="label-text">Part of muscle group</span>
-            </div>
-            <select
-              value={subcategory}
-              onChange={(e) => setSubcategory(e.target.value)}
-              className="select select-bordered w-full max-w-xs"
+      <Dialog.Root>
+        <Dialog.Trigger asChild>
+          <button className="btn btn-primary flex mx-auto ">
+            Create exercise
+          </button>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="bg-gray-950 bg-opacity-50 fixed inset-0" />
+          <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-gray-50 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
+            <Dialog.Title className=" font-semibold m-0 text-[17px]">
+              Create exercise
+            </Dialog.Title>
+            <Dialog.Description className=" font-normal mt-[10px] mb-5 text-[15px] leading-normal">
+              Fill out the details and add an exercise here. Click save when you
+              are done.
+            </Dialog.Description>
+            <form
+              onSubmit={handleSubmit}
+              className="form-control max-w-xs flex justify-center mx-auto"
             >
-              <option disabled value="">
-                Muscle
-              </option>
-              {subcategoryMapping[category].map((sub) => (
-                <option key={sub} value={sub}>
-                  {sub}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+              <fieldset className="mb-[10px]">
+                <span className="label-text  text-[15px] font-semibold">
+                  Name of exercise
+                </span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Type here"
+                  className="input input-bordered  w-full"
+                />
+                {errors.name && <p className="text-red-500">{errors.name}</p>}
+              </fieldset>
 
-        <div className="label">
-          <span className="label-text">Description</span>
-        </div>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe the exercise"
-          className="textarea textarea-bordered textarea-sm w-full max-w-xs"
-          maxLength={125}
-        ></textarea>
-        {errors.description && (
-          <p className="text-red-500">{errors.description}</p>
-        )}
+              <fieldset className="mb-[10px]">
+                <span className="label-text  text-[15px] font-semibold">
+                  Muscle group
+                </span>
+                <Select
+                  value={category}
+                  onChange={setCategory}
+                  options={categoryOptions}
+                  placeholder="Select category"
+                  className=" w-full"
+                  classNamePrefix="select"
+                />
+                {errors.category && (
+                  <p className="text-red-500">{errors.category}</p>
+                )}
+              </fieldset>
 
-        <div className="label">
-          <span className="label-text">Cover image</span>
-        </div>
-        <input
-          type="file"
-          className="file-input file-input-bordered w-full max-w-xs"
-        />
+              {category && (
+                <>
+                  <fieldset className="mb-[10px]">
+                    <span className="label-text  text-[15px] font-semibold">
+                      Part(s) of muscle group
+                    </span>
+                    <Select
+                      isMulti
+                      value={subcategories}
+                      onChange={setSubcategories}
+                      options={subcategoryOptions}
+                      className="basic-multi-select w-full"
+                      classNamePrefix="select"
+                    />
+                  </fieldset>
+                </>
+              )}
 
-        <button
-          type="submit"
-          className="btn btn-success bg-green-500 mt-4 mx-auto"
-        >
-          Add exercise
-        </button>
-      </form>
+              <fieldset className="mb-[10px]">
+                <span className="label-text  text-[15px] font-semibold">
+                  Brief description of exercise
+                </span>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe the exercise"
+                  className="textarea textarea-bordered textarea-sm w-full"
+                  maxLength={125}
+                ></textarea>
+                {errors.description && (
+                  <p className="text-red-500">{errors.description}</p>
+                )}
+              </fieldset>
+
+              <fieldset className="mb-[10px]">
+                <span className="label-text  text-[15px] font-semibold">
+                  Cover image of exercise
+                </span>
+                <input
+                  type="file"
+                  className="file-input file-input-bordered w-full "
+                />
+              </fieldset>
+
+              <button
+                type="submit"
+                className="btn bg-green-500 hover:bg-green-600 mt-4"
+              >
+                Save
+              </button>
+            </form>
+            <Dialog.Close asChild>
+              <button
+                className=" hover:bg-gray-200 focus:shadow-gray-700 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                aria-label="Close"
+              >
+                <Cross2Icon />
+              </button>
+            </Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
   );
 };

@@ -22,7 +22,7 @@ function Search({ placeholder }) {
   return (
     <div>
       <input
-        className="mx-auto flex mt-4 input input-bordered w-24 md:w-auto"
+        className="mx-auto flex mt-4 input input-bordered rounded-full w-24 md:w-auto"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
