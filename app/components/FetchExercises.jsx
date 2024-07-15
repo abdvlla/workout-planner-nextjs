@@ -109,7 +109,10 @@ const FetchExercises = () => {
         {loading
           ? Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           : exercises.map((exercise) => (
-              <div key={exercise.id} className="card bg-base-200 shadow-xl">
+              <div
+                key={exercise.id}
+                className="card-normal bg-base-200 shadow-xl"
+              >
                 <div className="relative">
                   <Image
                     src={dumbbellphoto}
